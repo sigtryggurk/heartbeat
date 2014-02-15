@@ -1,4 +1,11 @@
 Heartbeat::Application.routes.draw do
+
+  root :to => "users#index"
+
+  get "update" => "users#update"
+  resources :users
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
