@@ -1,3 +1,3 @@
 class User < ActiveRecord::Base
-  attr_accessible :beats, :location, :id
+  attr_accessible :id, :beats, :x, :y
 end

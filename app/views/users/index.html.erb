@@ -1,25 +1,65 @@
-<h1>Listing users</h1>
+<script type="text/javascript">
 
-<table>
-  <tr>
-    <th>Location</th>
-    <th>Beats</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
 
-<% @users.each do |user| %>
-  <tr>
-    <td><%= user.location %></td>
-    <td><%= user.beats %></td>
-    <td><%= link_to 'Show', user %></td>
-    <td><%= link_to 'Edit', edit_user_path(user) %></td>
-    <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
-<% end %>
-</table>
+var audio = new Audio('audio/heartbeat.mp3');
+function plot(user){
+  div = $("#"+user.id);
+  if(div.length==0){
+    div = $('<div class="circle"></div>');
+    div.attr('id',user.id);
+    $("body").append(div);
+  }
+  div.attr("delay",user.beats);
+  div.offset({left:user.x, top:user.y});
+}
 
-<br />
+function pulse(id) {
+    delay = parseInt($('#'+id).attr("delay"));
+    $('#'+id).animate({
+        width: 50, height: 50, 
+        opacity: 0.5
+    }, delay, function() {
+        $('#'+id).animate({
+            width: 60, height: 60, 
+            opacity: 1
+        }, delay, function() {
+            audio.play();
+            pulse(id);
+        });
+    }); 
+};
 
-<%= link_to 'New User', new_user_path %>
+$( document ).ready(function() {
+     function fetchData() {
+     $.ajax({
+      url:      '/get_users',
+      method:   'GET',
+      dataType: 'json',
+      success:  function(users) {
+          users.forEach(function(user) {
+ 		 plot(user);
+	         pulse(user.id);
+	  });
+          setTimeout(fetchData,  100);
+	}
+      });
+    }	
+    fetchData();  
+   
+});
+
+</script>
+
+<style type="text/css">
+.circle {
+	position: absolute;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px; 
+	background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, red 0%, orange 100%, yellow 95%);
+	background-image: -webkit-radial-gradient(45px 45px, circle cover,red , orange);
+	background-image: radial-gradient(45px 45px 45deg, circle cover, red, 0%, orange 100%, yellow 95%);
+}
+
+</style>
+

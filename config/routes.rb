@@ -2,7 +2,9 @@ Heartbeat::Application.routes.draw do
 
   root :to => "users#index"
 
-  get "update" => "users#update"
+  post "update" => "users#update"
+  get "get_users" => "users#get_users"
+
   resources :users
 
 
